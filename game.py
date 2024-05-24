@@ -49,6 +49,7 @@ class Teris():
         self.screen = pygame.display.set_mode((w * SIZE, h * SIZE))
         pygame.display.set_caption("Teris Game")
         self.title_font = pygame.font.Font(None, 36)  # Use default font with size 36
+        self.score_font = pygame.font.Font(None, 15)
         self.game_clock = pygame.time.Clock()
         self.speed = GAME_SPEED
     
@@ -236,6 +237,9 @@ class Teris():
             if element == 0: continue
             color = COLORS[list(COLOR_DICT.keys())[element-1]]
             pygame.draw.rect(self.screen, color, (index[1] * SIZE, index[0] * SIZE, SIZE, SIZE))
+        text = self.score_font.render("round: {}    score: {}".format(self.round, self.score), True, COLORS['white'])  # Render text with white color
+        text_rect = text.get_rect(center=(self.w // 2 * SIZE, SIZE))  # Center the text
+        self.screen.blit(text, text_rect)
         pygame.display.flip()
         self.game_clock.tick(self.speed)
 
@@ -248,7 +252,7 @@ class Teris():
 
     def draw_end(self):
         self.screen.fill(COLORS['black'])
-        text = self.title_font.render("Your Score: {}".format(self.score), True, COLORS['white'])  # Render text with white color
+        text = self.title_font.render("Final Score: {}".format(self.score), True, COLORS['white'])  # Render text with white color
         text_rect = text.get_rect(center=(self.w // 2 * SIZE, self.h // 2 * SIZE))  # Center the text
         self.screen.blit(text, text_rect)
         pygame.display.flip()
