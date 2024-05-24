@@ -59,13 +59,13 @@ class Teris():
                 self.reset()
                 self.update()
             
-            # is fall?
+            # is auto fall?
             current_time = pygame.time.get_ticks()
             if current_time - self.last_move_time >= FALL_INTERVAL:
                 self.block_move_down()
                 self.last_move_time = current_time
             
-            # get action
+            # receive action
             action = self.get_action()
             if action == 'quit': break
             if action == 'left':
@@ -186,7 +186,7 @@ class Teris():
     
     def update(self, speed=GAME_SPEED):
         # draw updated state
-        self.screen.fill(COLORS['white'])  # Fill the screen with white
+        self.screen.fill(COLORS['black'])  # Fill the screen with black
         for i, j in self.block.shape_coord:
             pygame.draw.rect(self.screen, COLORS[self.block.color], (j * SIZE, i * SIZE, SIZE, SIZE))
         for index, element in np.ndenumerate(self.pool):
