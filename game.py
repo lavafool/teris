@@ -82,28 +82,16 @@ class Teris():
 
     def play(self):
         while self.running:
-            # is game over
+            # check game over
             if self.is_block_in_pool():
                 return
-            # is auto fall
+            # auto fall
             current_time = pygame.time.get_ticks()
             if current_time - self.last_move_time >= self.fall_intv:
                 self.block_move_down()
                 self.last_move_time = current_time
             # receive action
-            action = self.get_action()
-            if action == 'quit': 
-                self.running = False
-            if action == 'left':
-                self.block_move_left()
-            elif action == 'right':
-                self.block_move_right()
-            elif action == 'down':
-                self.block_move_down()
-            elif action == 'fall':
-                self.block_fall()
-            elif action == 'rotate':
-                self.block_rotate()
+            self.action()
             # pool vanish
             self.pool_vanish()
 
@@ -194,25 +182,27 @@ class Teris():
         self.pool = np.vstack((np.zeros((len(vanish_list), self.w), dtype=int), self.pool))
         self.update()
 
-    def get_action(self):
-        action = None
+    def action(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return 'quit'
+                self.running = False
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    action = 'quit'
+                    self.running = False
+                    pygame.quit()
+                    sys.exit()
                 elif event.key == pygame.K_LEFT:
-                    action = 'left'
+                    self.block_move_left()
                 elif event.key == pygame.K_RIGHT:
-                    action = 'right'
+                    self.block_move_right()
                 elif event.key == pygame.K_DOWN:
-                    action = 'down'
+                    self.block_move_down()
                 elif event.key == pygame.K_UP:
-                    action = 'rotate'
+                    self.block_rotate()
                 elif event.key == pygame.K_SPACE:
-                    action = 'fall'
-        return action
+                    self.block_fall()
     
     def get_continue_flag(self):
         for event in pygame.event.get():
