@@ -69,26 +69,26 @@ class Teris():
         self.generate_block()
         self.last_move_time = pygame.time.get_ticks()
         self.draw_start()
-        while not self.get_continue_flag():
-            pass
+        while self.running:
+            if self.get_continue_flag():
+                return
 
     def end(self):
         self.draw_end()
-        while not self.get_continue_flag():
-            pass
+        while self.running:
+            if self.get_continue_flag():
+                return
 
     def play(self):
         while self.running:
             # is game over
             if self.is_block_in_pool():
                 return
-            
             # is auto fall
             current_time = pygame.time.get_ticks()
             if current_time - self.last_move_time >= self.fall_intv:
                 self.block_move_down()
                 self.last_move_time = current_time
-            
             # receive action
             action = self.get_action()
             if action == 'quit': 
@@ -103,7 +103,6 @@ class Teris():
                 self.block_fall()
             elif action == 'rotate':
                 self.block_rotate()
-
             # pool vanish
             self.pool_vanish()
 
@@ -215,7 +214,6 @@ class Teris():
         return action
     
     def get_continue_flag(self):
-        flag = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -227,9 +225,7 @@ class Teris():
                     pygame.quit()
                     sys.exit()
                 else:
-                    flag = True
-                    break
-        return flag
+                    return True
     
     def update(self):
         # draw updated state
