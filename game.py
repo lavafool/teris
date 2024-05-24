@@ -71,7 +71,7 @@ class Teris():
             
             # get action
             action = self.get_action()
-            if not action: continue
+            # if not action: continue
             if action == 'quit': break
             if action in ('left', 'right'):
                 if self.is_move_bump(action, block_coord_list): continue
