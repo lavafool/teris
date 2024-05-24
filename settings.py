@@ -1,7 +1,13 @@
 SIZE = 20
+WIDTH = 15
+HEIGHT = 25
 
-FALL_INTERVAL = 500 # 0.5s
-GAME_SPEED = 15
+FALL_INTERVAL = 500 # 0.8s
+SPEED_UP_RATE = 0.9 # interval down rate
+GAME_SPEED = 100
+
+ROUND_PASS_SCORE = 10
+
 
 COLORS = {
     "red": (255, 0, 0),

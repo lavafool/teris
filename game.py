@@ -1,7 +1,11 @@
+import sys
 import pygame
 from settings import *
 import random
 import numpy as np
+
+pygame.init()
+pygame.font.init()
 
 class Block():
     def __init__(self, init_y=0):
@@ -44,30 +48,51 @@ class Teris():
         self.h = h
         self.screen = pygame.display.set_mode((w * SIZE, h * SIZE))
         pygame.display.set_caption("Teris Game")
+        self.title_font = pygame.font.Font(None, 36)  # Use default font with size 36
         self.game_clock = pygame.time.Clock()
-        self.reset()
+        self.speed = GAME_SPEED
     
-    def reset(self):
+    def run(self):
+        self.running = True
+        while self.running:
+            self.start()
+            self.play()
+            self.end()
+        pygame.quit()
+        sys.exit()
+
+    def start(self):
+        self.fall_intv = FALL_INTERVAL
+        self.score = 0
+        self.round = 1
         self.pool = np.zeros((self.h, self.w), dtype=int)
         self.generate_block()
         self.last_move_time = pygame.time.get_ticks()
+        self.draw_start()
+        while not self.get_continue_flag():
+            pass
 
-    def run(self):
-        while True:
-            # is game over?
+    def end(self):
+        self.draw_end()
+        while not self.get_continue_flag():
+            pass
+
+    def play(self):
+        while self.running:
+            # is game over
             if self.is_block_in_pool():
-                self.reset()
-                self.update()
+                return
             
-            # is auto fall?
+            # is auto fall
             current_time = pygame.time.get_ticks()
-            if current_time - self.last_move_time >= FALL_INTERVAL:
+            if current_time - self.last_move_time >= self.fall_intv:
                 self.block_move_down()
                 self.last_move_time = current_time
             
             # receive action
             action = self.get_action()
-            if action == 'quit': break
+            if action == 'quit': 
+                self.running = False
             if action == 'left':
                 self.block_move_left()
             elif action == 'right':
@@ -83,6 +108,7 @@ class Teris():
             self.pool_vanish()
 
         pygame.quit()
+        sys.exit()
 
     def generate_block(self):
         self.block = Block(self.w // 2)
@@ -160,6 +186,10 @@ class Teris():
             if non_zero_count == self.w:
                 vanish_list.append(i)
         if not vanish_list: return
+        self.score += len(vanish_list)
+        if self.score % ROUND_PASS_SCORE == 0:
+            self.round += 1
+            self.fall_intv *= SPEED_UP_RATE
         self.pool = self.pool[np.array([True if i not in vanish_list else False for i in range(self.h)])]
         self.pool = np.vstack((np.zeros((len(vanish_list), self.w), dtype=int), self.pool))
         self.update()
@@ -184,7 +214,24 @@ class Teris():
                     action = 'fall'
         return action
     
-    def update(self, speed=GAME_SPEED):
+    def get_continue_flag(self):
+        flag = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.running = False
+                    pygame.quit()
+                    sys.exit()
+                else:
+                    flag = True
+                    break
+        return flag
+    
+    def update(self):
         # draw updated state
         self.screen.fill(COLORS['black'])  # Fill the screen with black
         for i, j in self.block.shape_coord:
@@ -193,11 +240,23 @@ class Teris():
             if element == 0: continue
             color = COLORS[list(COLOR_DICT.keys())[element-1]]
             pygame.draw.rect(self.screen, color, (index[1] * SIZE, index[0] * SIZE, SIZE, SIZE))
-        
         pygame.display.flip()
-        self.game_clock.tick(speed)
-    
+        self.game_clock.tick(self.speed)
+        
+    def draw_start(self):
+        self.screen.fill(COLORS['black'])
+        text = self.title_font.render("Teris Start", True, COLORS['white'])  # Render text with white color
+        text_rect = text.get_rect(center=(self.w // 2 * SIZE, self.h // 2 * SIZE))  # Center the text
+        self.screen.blit(text, text_rect)
+        pygame.display.flip()
+
+    def draw_end(self):
+        self.screen.fill(COLORS['black'])
+        text = self.title_font.render("Your Score: {}".format(self.score), True, COLORS['white'])  # Render text with white color
+        text_rect = text.get_rect(center=(self.w // 2 * SIZE, self.h // 2 * SIZE))  # Center the text
+        self.screen.blit(text, text_rect)
+        pygame.display.flip()
 
 if __name__ == '__main__':
-    game = Teris(15, 25)
+    game = Teris(WIDTH, HEIGHT)
     game.run()
