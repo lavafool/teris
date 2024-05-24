@@ -150,7 +150,9 @@ class Teris():
             if event.type == pygame.QUIT:
                 return 'quit'
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_ESCAPE:
+                    action = 'quit'
+                elif event.key == pygame.K_LEFT:
                     action = 'left'
                 elif event.key == pygame.K_RIGHT:
                     action = 'right'
