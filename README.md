@@ -6,6 +6,6 @@ python game.py
 * game keys
   - left arrow: block move left
   - right arrow: block move right
-  - up arrow: clock-wise turn block
+  - up arrow: clock-wise rotate block
   - space: block straight fall
   - esc: quit game

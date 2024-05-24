@@ -19,7 +19,7 @@ class Block():
         self.shape = BLOCK_DICT[self.name]['shape_list'][self.idx]
         self.shape_coord = list(map(lambda x: [x[0]+self.coord[0], x[1]+self.coord[1]], self.shape))
     
-    def turn(self):
+    def rotate(self):
         self.idx = self.idx + 1 if self.idx < len(BLOCK_DICT[self.name]['shape_list']) - 1 else 0
         self.shape = BLOCK_DICT[self.name]['shape_list'][self.idx]
         self.shape_coord = list(map(lambda x: [x[0]+self.coord[0], x[1]+self.coord[1]], self.shape))
@@ -36,7 +36,7 @@ class Block():
         self.coord = [self.coord[0], self.coord[1] + n]
         self.shape_coord = list(map(lambda x: [x[0]+self.coord[0], x[1]+self.coord[1]], self.shape))
 
-    def get_turn_coord_list(self):
+    def get_rotate_coord_list(self):
         new_idx = self.idx + 1 if self.idx < len(BLOCK_DICT[self.name]['shape_list']) - 1 else 0
         new_shape = BLOCK_DICT[self.name]['shape_list'][new_idx]
         return list(map(lambda x: [x[0]+self.coord[0], x[1]+self.coord[1]], new_shape))
@@ -101,8 +101,8 @@ class Teris():
                 self.block_move_down()
             elif action == 'fall':
                 self.block_fall()
-            elif action == 'turn':
-                self.block_turn()
+            elif action == 'rotate':
+                self.block_rotate()
 
             # pool vanish
             self.pool_vanish()
@@ -123,9 +123,9 @@ class Teris():
                 return True
         return False
     
-    def is_turn_bump(self):
-        block_turn_coord_list = self.block.get_turn_coord_list()
-        for i, j in block_turn_coord_list:
+    def is_rotate_bump(self):
+        block_rotate_coord_list = self.block.get_rotate_coord_list()
+        for i, j in block_rotate_coord_list:
             if i < 0 or j < 0 or i >= self.h or j >= self.w or self.pool[i, j] > 0:
                 return True
         return False
@@ -140,9 +140,9 @@ class Teris():
             self.block.right()
             self.update()
     
-    def block_turn(self):
-        if not self.is_turn_bump():
-            self.block.turn()
+    def block_rotate(self):
+        if not self.is_rotate_bump():
+            self.block.rotate()
             self.update()
 
     def block_move_down(self):
@@ -209,7 +209,7 @@ class Teris():
                 elif event.key == pygame.K_DOWN:
                     action = 'down'
                 elif event.key == pygame.K_UP:
-                    action = 'turn'
+                    action = 'rotate'
                 elif event.key == pygame.K_SPACE:
                     action = 'fall'
         return action
@@ -242,7 +242,7 @@ class Teris():
             pygame.draw.rect(self.screen, color, (index[1] * SIZE, index[0] * SIZE, SIZE, SIZE))
         pygame.display.flip()
         self.game_clock.tick(self.speed)
-        
+
     def draw_start(self):
         self.screen.fill(COLORS['black'])
         text = self.title_font.render("Teris Start", True, COLORS['white'])  # Render text with white color
