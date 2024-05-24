@@ -9,3 +9,6 @@ python game.py
   - up arrow: clock-wise rotate block
   - space: block straight fall
   - esc: quit game
+
+* game settings
+  - settings.py

@@ -2,8 +2,8 @@ SIZE = 20
 WIDTH = 15
 HEIGHT = 25
 
-FALL_INTERVAL = 500 # 0.8s
-SPEED_UP_RATE = 0.9 # interval down rate
+FALL_INTERVAL = 500 # 0.5s
+SPEED_UP_RATE = 0.8 # interval down rate
 GAME_SPEED = 100
 
 ROUND_PASS_SCORE = 10
