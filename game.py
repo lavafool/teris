@@ -222,11 +222,11 @@ class Teris():
         # draw updated state
         self.screen.fill(COLORS['black'])  # Fill the screen with black
         for i, j in self.block.shape_coord:
-            pygame.draw.rect(self.screen, COLORS[self.block.color], (j * SIZE, i * SIZE, SIZE, SIZE))
+            pygame.draw.rect(self.screen, COLORS[self.block.color], (j * SIZE, i * SIZE, SIZE-1, SIZE-1))
         for index, element in np.ndenumerate(self.pool):
             if element == 0: continue
             color = COLORS[list(COLOR_DICT.keys())[element-1]]
-            pygame.draw.rect(self.screen, color, (index[1] * SIZE, index[0] * SIZE, SIZE, SIZE))
+            pygame.draw.rect(self.screen, color, (index[1] * SIZE, index[0] * SIZE, SIZE-1, SIZE-1))
         text = self.score_font.render("round: {}    score: {}".format(self.round, self.score), True, COLORS['white'])  # Render text with white color
         text_rect = text.get_rect(center=(self.w // 2 * SIZE, SIZE))  # Center the text
         self.screen.blit(text, text_rect)
